@@ -80,6 +80,15 @@ class Tuple {
         )
     }
 
+    hadamard(other) {
+        return new Tuple(
+            this.first * other.first,
+            this.second * other.second,
+            this.third * other.third,
+            this.fourth * other.fourth
+        )
+    }
+
     isPoint() {
         return this.fourth === 1
     }
@@ -97,4 +106,8 @@ function vector(first, second, third) {
     return new Tuple(first, second, third, 0)
 }
 
-module.exports = {Tuple, point, vector}
+function color(first, second, third) {
+    return new Tuple(first, second, third, 0)
+}
+
+module.exports = {Tuple, point, vector, color}
