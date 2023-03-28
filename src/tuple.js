@@ -1,3 +1,4 @@
+const { floatingPointEquals } = require('./utils.js')
 
 class Tuple {
 
@@ -9,16 +10,13 @@ class Tuple {
     }
 
     equals(other) {
-        return (
-            Tuple.componentEquals(this.first, other.first) &&
-            Tuple.componentEquals(this.second, other.second) &&
-            Tuple.componentEquals(this.third, other.third) &&
-            Tuple.componentEquals(this.fourth, other.fourth)
+        if (!(other instanceof Tuple)) {return false}
+        else return (
+            floatingPointEquals(this.first, other.first) &&
+            floatingPointEquals(this.second, other.second) &&
+            floatingPointEquals(this.third, other.third) &&
+            floatingPointEquals(this.fourth, other.fourth)
         )
-    }
-
-    static componentEquals(a, b) {
-        return Math.abs(a-b) <= Number.EPSILON
     }
 
     add(other) {
