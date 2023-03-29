@@ -109,6 +109,16 @@ class Matrix {
         return new Matrix(data)
     }
 
+    transpose() {
+        const data = this.zeroes()
+        for (let rowIndex=0; rowIndex<this.height; rowIndex++) {
+            for (let colIndex=0; colIndex<this.width; colIndex++) {
+                data[rowIndex][colIndex] = this.get(colIndex, rowIndex)
+            }
+        }
+        return new Matrix(data)
+    }
+
     validateData(data) {
         const height = data.length
         if (height < 2 || height > 4) {

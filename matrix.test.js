@@ -102,4 +102,35 @@ test('dot', () => {
     expect(m3.get(0, 1)).toBe(22)
     expect(m3.get(1, 0)).toBe(43)
     expect(m3.get(1, 1)).toBe(50)
+
+    const m4 = new Matrix([[1,2,3,4],
+                            [5,6,7,8],
+                            [9,10,11,12],
+                            [13,14,15,16]])
+
+    const m5 = new Matrix([[1,0,0,0],
+                            [0,1,0,0],
+                            [0,0,1,0],
+                            [0,0,0,1]])
+    
+    expect(m4.dot(m5).equals(m4)).toBe(true)
+})
+
+test('transpose', () => {
+    const m1 = new Matrix([[1,2], 
+                            [3,4]])
+    const m1_transpose = m1.transpose()
+    const m2 = new Matrix([[1,3],[2,4]])
+    expect(m1_transpose.equals(m2)).toBe(true)
+
+    const m3 = new Matrix([[1,2,3,4],
+                            [5,6,7,8],
+                            [9,10,11,12],
+                            [13,14,15,16]])
+
+    const m3_transpose = m3.transpose()
+    console.log(m3_transpose)
+    const m4 = new Matrix([[1,5,9,13],[2,6,10,14],[3,7,11,15],[4,8,12,16]])
+
+    expect(m3_transpose.equals(m4)).toBe(true)
 })
