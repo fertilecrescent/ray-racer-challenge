@@ -19,21 +19,20 @@ class Pixels {
         const [r, g, b, a] = this.getIndices(x,y)
         color = this.clampColor(color)
 
-        this.data[r] = color.first
-        this.data[g] = color.second
-        this.data[b] = color.third
+        this.data[r] = color.get(0)
+        this.data[g] = color.get(1)
+        this.data[b] = color.get(2)
         this.data[a] = 255
     }
 
     draw() {
-        console.log(this.imageData, 'image data')
         this.ctx.putImageData(this.imageData, 0, 0)
     }
 
     clampColor(color) {
-        color.first = this.clampComponent(color.first)
-        color.second = this.clampComponent(color.second)
-        color.third = this.clampComponent(color.third)
+        color.set(0, this.clampComponent(color.get(0)))
+        color.set(1, this.clampComponent(color.get(1)))
+        color.set(2, this.clampComponent(color.get(2)))
         return color
     }
 
@@ -48,13 +47,13 @@ class Pixels {
     }
 
     read(x, y) {
-        const [r, g, b, a] = this.getIndices(x,y)
-        return new Tuple(
+        const [r, g, b] = this.getIndices(x,y)
+        return new Tuple([
             this.data[r],
             this.data[g],
             this.data[b],
             0
-        )
+        ])
     }
 
     readComponent(x, y, component) {

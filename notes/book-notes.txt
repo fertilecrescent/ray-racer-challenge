@@ -1,0 +1,17 @@
+book uses left handed coordinates
+    fingers up, thumb in positive x, positive z is direction of palm
+    basically, z points "out"
+
+i'm always wondering about the true difference between points and vectors
+here, they are distinguished by a bit in the 4 position of a tuple
+    consequences of addition
+        can't add points (fourth would be 2)
+        a vector plus a point is a point
+        a vector plus a vector is a vector
+        a point minus a point is a vector
+        can't subtract a point from a vector
+
+it kind of makes sense that points are marked by a one and vectors are a 0, since a point is "more than" a vector
+
+the result of the javascript expression .1 + .2 is .30000000000000004 and the result of .1 + .2 === .3 is false
+    Use Number.EPSILON to skirt around this

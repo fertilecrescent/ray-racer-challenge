@@ -1,0 +1,41 @@
+{
+  "name": "ray-racer-challenge",
+  "version": "1.0.0",
+  "description": "Following along with the book Ray Tracer Challenge by Jamis Buck",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "start": "npx webpack; open src/index.html",
+    "build": "npx webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fertilecrscent/ray-tracer-challenge.git"
+  },
+  "keywords": [
+    "ray",
+    "tracer",
+    "physics",
+    "javascript",
+    "graphics",
+    "algorithms"
+  ],
+  "author": "Brandon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fertilecrscent/ray-tracer-challenge/issues"
+  },
+  "homepage": "https://github.com/fertilecrscent/ray-tracer-challenge#readme",
+  "dependencies": {
+    "jest": "^29.5.0",
+    "jest-environment-jsdom": "^29.5.0",
+    "webpack": "^5.76.3"
+  },
+  "devDependencies": {
+    "jest-canvas-mock": "^2.5.0",
+    "webpack-cli": "^5.0.1"
+  },
+  "jest": {
+    "setupFiles": ["jest-canvas-mock"]
+  }
+}

@@ -3,30 +3,79 @@ const { floatingPointEquals } = require('./utils.js')
 
 class Matrix {
 
-    constructor(height, width) {
-        this.validateHeightWidth(height, width)
-        this.height = height
-        this.width = width
-        this.data = this.zeroes()
+    constructor(data, height, width) {
+        if (data) {
+            this.validateData(data)
+            this.data = data
+            this.height = this.data.length
+            this.width = this.data[0].length
+        } else {
+            this.validateHeightWidth(height, width)
+            this.height = height
+            this.width = width
+            this.data = this.zeroes()
+        }
     }
 
     zeroes() {
         const data = []
-        for (let row=0; row<this.height; row++) {
+        for (let rowIndex=0; rowIndex<this.height; rowIndex++) {
             data.push([])
-            for (let col=0; col<this.width; col++) {
-                data[row].push(0)
+            for (let colIndex=0; colIndex<this.width; colIndex++) {
+                data[rowIndex].push(0)
             }
         }
         return data
     }
 
-    get(row, col) {
-        return this.data[row][col]
+    get(rowIndex, colIndex) {
+        return this.data[rowIndex][colIndex]
     }
 
-    set(row, col, val) {
-        this.data[row][col] = val
+    rows() {
+        return this.data
+    }
+
+    cols() {
+        const cols = []
+        for (let colIndex=0; colIndex<this.width; colIndex++) {
+            cols.push(this.getCol(colIndex))
+        }
+        return cols
+    }
+
+    set(rowIndex, colIndex, val) {
+        this.data[rowIndex][colIndex] = val
+    }
+
+    getRow(rowIndex) {
+        return this.data[rowIndex]
+    }
+
+    getRowAsTuple(rowIndex) {
+        return new Tuple(this.getRow(rowIndex))
+    }
+
+    setRow(rowIndex, row) {
+        this.data[rowIndex] = row
+    }
+
+    getCol(colIndex) {
+        const col = []
+        for (let rowIndex=0; rowIndex<this.height; rowIndex++) {
+            col.push(this.get(rowIndex, colIndex))
+        }
+        return col
+    }
+
+    getColAsTuple(colIndex) {
+        return new Tuple(this.getCol(colIndex))
+    }
+
+    setCol(colIndex, col) {
+        for (let rowIndex=0; rowIndex<this.height; rowIndex++) {
+            this.set(rowIndex, colIndex, col[rowIndex])
+        }
     }
 
     equals(other) {
@@ -34,9 +83,9 @@ class Matrix {
         else if (this.width !== other.width) {return false}
         else if (this.height !== other.height) {return false}
         else {
-            for (let row=0; row<this.height; row++) {
-                for (let col=0; col<this.width; col++) {
-                    if (!floatingPointEquals(this.get(row, col), other.get(row, col))) {
+            for (let rowIndex=0; rowIndex<this.height; rowIndex++) {
+                for (let colIndex=0; colIndex<this.width; colIndex++) {
+                    if (!floatingPointEquals(this.get(rowIndex, colIndex), other.get(rowIndex, colIndex))) {
                         return false
                     }
                 }
@@ -45,24 +94,39 @@ class Matrix {
         }
     }
 
-    multiply(other) {
-        if (!this.height === 4) {
-            throw Error("matrix multiplications require a 4x4 matrix")
+    dot(other) {
+        const data = []
+        let thisRow
+        let otherCol
+        for (let i=0; i<this.height; i++) {
+            data.push([])
+            for (let j=0; j<other.width; j++) {
+                thisRow = this.getRowAsTuple(i)
+                otherCol = other.getColAsTuple(j)
+                data[i].push(thisRow.dot(otherCol))
+            }
         }
-        if (other instanceof Tuple) {return this._multiplyTuple(other)}
-        else {
-
-        }
+        return new Matrix(data)
     }
 
-    _multiplyTuple(tuple) {
-        if (!this.height === 4) {
-            throw Error("matrix multiplications require a 4x4 matrix")
+    validateData(data) {
+        const height = data.length
+        if (height < 2 || height > 4) {
+            throw Error('dims must be 2x2 or 3x3 or 4x4')
         }
-        
+        const width = data[0].length
+        if (!(height == width)) {
+            throw Error('dims must be 2x2 or 3x3 or 4x4')
+        }
+        if (width < 2 || width > 4) {
+            throw Error('dims must be 2x2 or 3x3 or 4x4')
+        }
+        for (let rowIndex=1; rowIndex<height; rowIndex++) {
+            if (data[rowIndex].length != width) {
+                throw Error('dims must be 2x2 or 3x3 or 4x4')
+            }
+        }
     }
-
-    multiplyTuple()
 
     validateHeightWidth(height, width) {
         if (height < 2 || height > 4) {

@@ -1,0 +1,36 @@
+a vector is "dislodged point"
+    a point who's origin can be anywhere
+    a sub-coordinate-system
+    a portable coordinate system
+    an abstract point
+
+coordinate systems are relative to other coordinate systems
+
+a vector *encodes* direction and magnitude
+    vec.normalize() would be equivalent to vec.magnitude = 1
+        if magnitude was not an actual property of vec, and not 
+        just encoded by its properties
+
+in 2d, there is one vector perpendicular to a line
+in 3d, there is a whole "circle" of vectors perpendicular to a line
+but given two lines in 3d, there is only one vector that is perpendicular to both
+    and we would say that it is perpendicular to the "plane" formed by those two lines
+
+the cross product of two vectors is a vector that is perpendicular to both vectors
+
+    a "cross product" results in a cross
+    a "dot product"/"scalar produce" results in a dot/scalar
+
+    in 3d, if the operands lie on the XY plane, it makes intuitive sense that the cross 
+        product sticks straight up
+    it also makes sense analytically, because each element forming x and y of the cross product
+        is a multiple of z (which is 0)
+
+    each component of the cross product is a function of the *other* two components of each operand
+
+    consider c = cross(a, b)
+
+        
+
+* real numbers don't have "steps"
+* (not math related) motivation to take 100 happen when 0 steps is enough

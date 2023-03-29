@@ -2,110 +2,101 @@ const { floatingPointEquals } = require('./utils.js')
 
 class Tuple {
 
-    constructor(first, second, third, fourth=0) {
-        this.first = first
-        this.second = second
-        this.third = third
-        this.fourth = fourth
+    constructor(data) {
+        this.data = data
+        this.size = data.length
+    }
+
+    get(index) {
+        if (index >= this.size) {
+            throw Error(`${index} is out of bounds for tuple of size ${this.size}`)
+        }
+        return this.data[index]
+    }
+
+    set(index, value) {
+        if (index >= this.size) {
+            throw Error(`${index} is out of bounds for tuple of size ${this.size}`)
+        }
+        this.data[index] = value
     }
 
     equals(other) {
         if (!(other instanceof Tuple)) {return false}
-        else return (
-            floatingPointEquals(this.first, other.first) &&
-            floatingPointEquals(this.second, other.second) &&
-            floatingPointEquals(this.third, other.third) &&
-            floatingPointEquals(this.fourth, other.fourth)
-        )
+        else if (!(this.size === other.size)) {return false}
+        else {
+            return this.data.reduce((acc, _, index) => {
+                return acc && 
+                floatingPointEquals(this.get(index), other.get(index))
+            }, true)
+        }
     }
 
     add(other) {
-        return new Tuple(
-            this.first + other.first,
-            this.second + other.second,
-            this.third + other.third,
-            this.fourth + other.fourth
-        )
+        if (!(other instanceof Tuple)) {
+            throw Error('only tuples can be added to tuples')
+        } else if (!(this.size === other.size)) {
+            throw Error('cannot add tuples of different sizes')
+        } else {
+            return new Tuple(this.data.map((_, index) => this.get(index) + other.get(index)))
+        }
     }
 
     subtract(other) {
-        return new Tuple(
-            this.first - other.first,
-            this.second - other.second,
-            this.third - other.third,
-            this.fourth - other.fourth
-        )
+        if (!(other instanceof Tuple)) {
+            throw Error('only tuples can be subtracted from tuples')
+        } else if (!(this.size === other.size)) {
+            throw Error('cannot subtract tuples of different sizes')
+        } else {
+            return new Tuple(this.data.map((_, index) => this.get(index) - other.get(index)))
+        }
     }
 
     negate() {
-        return (new Tuple(0, 0, 0, 0)).subtract(this)
+        const zeros = []
+        for (let i=0; i<this.size; i++) {zeros.push(0)}
+        return (new Tuple(zeros)).subtract(this)
     }
 
     scale(factor) {
-        return new Tuple(
-            this.first * factor,
-            this.second * factor,
-            this.third * factor,
-            this.fourth * factor
-        )
+        return new Tuple(this.data.map((val) => val*factor))
     }
 
     magnitude() {
-        const sumOfSquares = this.first*this.first + this.second*this.second + 
-            this.third*this.third + this.fourth*this.fourth
+        const squares = this.data.map((val) => val*val)
+        const sumOfSquares = squares.reduce((acc, val) => {return acc + val}, 0)
         return Math.pow(sumOfSquares, 1/2)
     }
 
     normalize() {
-        return new Tuple(
-            this.first / this.magnitude(),
-            this.second / this.magnitude(),
-            this.third / this.magnitude(),
-            this.fourth / this.magnitude()
-        )
+        return new Tuple(this.data.map((val) => val/this.magnitude()))
     }
 
     dot(other) {
-        return this.first * other.first + this.second * other.second +
-            this.third * other.third + this.fourth * other.fourth
+        return this.data.reduce((acc, _, index) => {
+            return acc + this.get(index)*other.get(index)
+        }, 0)
     }
 
     cross(other) {
-        return new Tuple(
-            this.second * other.third - this.third * other.second,
-            this.third * other.first - this.first * other.third,
-            this.first * other.second - this.second * other.third
-        )
+        if (!(other instanceof Tuple)) {throw Error('cannot cross a vector with a non-vector')}
+        else if (!(this.size === 4 && other.size === 4)) {
+            throw Error('to cross two vectors they must each be of size 4')
+        } else {
+            return new Tuple([
+                this.get(1) * other.get(2) - this.get(2) * other.get(1),
+                this.get(2) * other.get(0) - this.get(0) * other.get(2),
+                this.get(0) * other.get(1) - this.get(1) * other.get(0),
+                0
+            ])
+        }
     }
 
     hadamard(other) {
-        return new Tuple(
-            this.first * other.first,
-            this.second * other.second,
-            this.third * other.third,
-            this.fourth * other.fourth
-        )
-    }
-
-    isPoint() {
-        return this.fourth === 1
-    }
-
-    isVector() {
-        return this.fourth === 0
+        return new Tuple(this.data.map((_, index) => 
+            this.get(index)*other.get(index)
+        ))
     }
 }
 
-function point(first, second, third) {
-    return new Tuple(first, second, third, 1)
-}
-
-function vector(first, second, third) {
-    return new Tuple(first, second, third, 0)
-}
-
-function color(first, second, third) {
-    return new Tuple(first, second, third, 0)
-}
-
-module.exports = {Tuple, point, vector, color}
+module.exports = { Tuple }
