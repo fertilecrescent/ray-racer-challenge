@@ -78,14 +78,14 @@ class Matrix {
         }
     }
 
-    equals(other) {
+    equals(other, precision) {
         if (!(other instanceof Matrix)) {return false}
         else if (this.width !== other.width) {return false}
         else if (this.height !== other.height) {return false}
         else {
             for (let rowIndex=0; rowIndex<this.height; rowIndex++) {
                 for (let colIndex=0; colIndex<this.width; colIndex++) {
-                    if (!floatingPointEquals(this.get(rowIndex, colIndex), other.get(rowIndex, colIndex))) {
+                    if (!floatingPointEquals(this.get(rowIndex, colIndex), other.get(rowIndex, colIndex), precision)) {
                         return false
                     }
                 }
@@ -94,7 +94,7 @@ class Matrix {
         }
     }
 
-    dot(other) {
+    multiply(other) {
         const data = []
         let thisRow
         let otherCol
@@ -119,10 +119,25 @@ class Matrix {
         return new Matrix(data)
     }
 
-    det() {
+    det2() {
+        if (this.width !== 2 || this.height !== 2) {
+            throw Error('this function only works on 2x2 matrices')
+        }
         if (this.width = 2) {
             return this.get(0,0)*this.get(1,1) - this.get(0,1)*this.get(1,0)
         }
+    }
+
+    _removeRow(rowIndex) {
+
+    }
+
+    _removeCol(colIndex) {
+
+    }
+
+    submatrix(rowIndex, colIndex) {
+
     }
 
     validateData(data) {
@@ -151,6 +166,15 @@ class Matrix {
             throw Error('dims must be 2x2 or 3x3 or 4x4')
         } else if (height !== width) {
             throw Error('dims must be 2x2 or 3x3 or 4x4')
+        }
+    }
+
+    round(digits) {
+        const data = []
+        for (let rowIndex=0; rowIndex<this.height; rowIndex++) {
+            for (let colIndex=0; colIndex<this.width; colIndex++) {
+                data.push()
+            }
         }
     }
 }
