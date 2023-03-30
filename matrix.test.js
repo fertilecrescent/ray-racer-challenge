@@ -129,8 +129,21 @@ test('transpose', () => {
                             [13,14,15,16]])
 
     const m3_transpose = m3.transpose()
-    console.log(m3_transpose)
     const m4 = new Matrix([[1,5,9,13],[2,6,10,14],[3,7,11,15],[4,8,12,16]])
 
     expect(m3_transpose.equals(m4)).toBe(true)
+})
+
+test('2x2 determinants', () => {
+    const m1 = new Matrix(
+        [[1,2],
+        [3,4]]
+    )
+    expect(m1.det()).toBe(-2)
+
+    const m2 = new Matrix(
+        [[1,2],
+        [5,10]]
+    )
+    expect(m2.det()).toBe(0)
 })

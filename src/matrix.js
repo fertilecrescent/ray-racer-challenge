@@ -119,6 +119,12 @@ class Matrix {
         return new Matrix(data)
     }
 
+    det() {
+        if (this.width = 2) {
+            return this.get(0,0)*this.get(1,1) - this.get(0,1)*this.get(1,0)
+        }
+    }
+
     validateData(data) {
         const height = data.length
         if (height < 2 || height > 4) {
