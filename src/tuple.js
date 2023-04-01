@@ -99,4 +99,12 @@ class Tuple {
     }
 }
 
-module.exports = { Tuple }
+function point(x, y, z) {
+    return new Tuple(x,y,z,1)
+}
+
+function vector(x, y, z) {
+    return new Tuple([x,y,z,0])
+}
+
+module.exports = { Tuple, point, vector }

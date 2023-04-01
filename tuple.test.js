@@ -1,4 +1,12 @@
 const {Tuple} = require('./src/tuple.js')
+const {
+    translation, 
+    scaling, 
+    rotationX, 
+    rotationY, 
+    rotationZ, 
+    shearing
+} = require('transformations.js')
 
 test('constructor', () => {
 
@@ -119,4 +127,81 @@ test('hadamard', () => {
     expect(tupC.get(1)).toBe(36)
     expect(tupC.get(2)).toBe(36)
     expect(tupC.get(3)).toBe(24)
+})
+
+test('translate', () => {
+    const tup = new Tuple([1,2,3,1])
+
+    const result = tup.translate(4,5,6)
+
+    const transform = translate(4,5,6)
+    const answer = transform.multiply(tup)
+
+    expect(result.equals(answer)).toBe(true)
+})
+
+test('scale', () => {
+    const tup = new Tuple([1,2,3,1])
+
+    const result = tup.scale(4,5,6)
+
+    const transform = scale(4,5,6)
+    const answer = transform.multiply(tup)
+
+    expect(result.equals(answer)).toBe(true)
+})
+
+test('rotateX', () => {
+    const tup = new Tuple([1,2,3,1])
+
+    const result = tup.rotateX(4)
+
+    const transform = rotateX(4)
+    const answer = transform.multiply(tup)
+
+    expect(result.equals(answer)).toBe(true)
+})
+
+test('rotateY', () => {
+    const tup = new Tuple([1,2,3,1])
+
+    const result = tup.rotateY(4)
+
+    const transform = rotateY(4)
+    const answer = transform.multiply(tup)
+
+    expect(result.equals(answer)).toBe(true)
+})
+
+test('rotateZ', () => {
+    const tup = new Tuple([1,2,3,1])
+
+    const result = tup.rotateZ(4)
+
+    const transform = rotateZ(4)
+    const answer = transform.multiply(tup)
+
+    expect(result.equals(answer)).toBe(true)
+})
+
+test('shear', () => {
+    const tup = new Tuple([1,2,3,1])
+
+    const result = tup.shear(4,5,6,7,8,9)
+
+    const transform = shear(4,5,6,7,8,9)
+    const answer = transform.multiply(tup)
+
+    expect(result.equals(answer)).toBe(true)
+})
+
+test('chain', () => {
+    const tup = new Tuple([1,2,3,1])
+
+    const result = tup.shear(4,5,6,7,8,9).rotateZ(10).scale(-11)
+
+    const transform = scale(-11).multiply(rotateZ(10)).multiply(shear(4,5,6,7,8,9))
+    const answer = transform.multiply(result)
+
+    expect(result.equals(answer)).toBe(true)
 })
