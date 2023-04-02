@@ -1,14 +1,8 @@
-const { Tuple } = require('./src/tuple.js')
-const { Matrix } = require('./src/matrix.js')
-const { floatingPointEquals } = require('./src/utils.js')
 const {
-    translation, 
-    scaling, 
-    rotationX, 
-    rotationY, 
-    rotationZ, 
-    shearing
-} = require('./src/transformations.js')
+    Tuple,
+    Matrix
+} = require('./src/matrix.js')
+const { floatingPointEquals } = require('./src/utils.js')
 
 test('constructor', () => {
 
@@ -441,149 +435,14 @@ test('inverse', () => {
     expect(m3.multiply(m2_inverse).equals(m1, 8)).toBe(true)
 })
 
-// test('translate', () => {
-//     const m = new Matrix([
-//         [1,2,3,1],
-//         [4,5,6,1],
-//         [7,8,9,1],
-//         [10,11,12,1]
-//     ])
+test('multiplyTuple', () => {
+    const tup = new Tuple([1,2,3])
+    const m = new Matrix([
+        [1,2,1],
+        [2,1,3],
+        [1,4,0]
+    ])
 
-//     const result = m.translate(13,14,15)
-
-//     const transform = translation(13,14,15)
-//     const answerData = []
-//     for (let i=0; i<m.height; i++) {
-//         let row = m.getRowAsTuple(i)
-//         answer.data.push(transform.multiply(row).data)
-//     }
-
-//     const answer = new Matrix(answerData)
-//     expect(result.equals(answer)).toBe(true)
-// })
-
-// test('scale', () => {
-//     const m = new Matrix([
-//         [1,2,3,1],
-//         [4,5,6,1],
-//         [7,8,9,1],
-//         [10,11,12,1]
-//     ])
-
-//     const result = m.scale(13,14,15)
-
-//     const transform = scale(13,14,15)
-//     const answerData = []
-//     for (let i=0; i<m.height; i++) {
-//         let row = m.getRowAsTuple(i)
-//         answer.data.push(transform.multiply(row).data)
-//     }
-
-//     const answer = new Matrix(answerData)
-//     expect(result.equals(answer)).toBe(true)
-// })
-
-// test('rotateX', () => {
-//     const m = new Matrix([
-//         [1,2,3,1],
-//         [4,5,6,1],
-//         [7,8,9,1],
-//         [10,11,12,1]
-//     ])
-
-//     const result = m.rotateX(13)
-
-//     const transform = rotateX(13)
-//     const answerData = []
-//     for (let i=0; i<m.height; i++) {
-//         let row = m.getRowAsTuple(i)
-//         answer.data.push(transform.multiply(row).data)
-//     }
-
-//     const answer = new Matrix(answerData)
-//     expect(result.equals(answer)).toBe(true)
-// })
-
-// test('rotateY', () => {
-//     const m = new Matrix([
-//         [1,2,3,1],
-//         [4,5,6,1],
-//         [7,8,9,1],
-//         [10,11,12,1]
-//     ])
-
-//     const result = m.rotateY(13)
-
-//     const transform = rotateY(13)
-//     const answerData = []
-//     for (let i=0; i<m.height; i++) {
-//         let row = m.getRowAsTuple(i)
-//         answer.data.push(transform.multiply(row).data)
-//     }
-
-//     const answer = new Matrix(answerData)
-//     expect(result.equals(answer)).toBe(true)
-// })
-
-// test('rotateZ', () => {
-//     const m = new Matrix([
-//         [1,2,3,1],
-//         [4,5,6,1],
-//         [7,8,9,1],
-//         [10,11,12,1]
-//     ])
-
-//     const result = m.rotateZ(13)
-
-//     const transform = rotateZ(13)
-//     const answerData = []
-//     for (let i=0; i<m.height; i++) {
-//         let row = m.getRowAsTuple(i)
-//         answer.data.push(transform.multiply(row).data)
-//     }
-
-//     const answer = new Matrix(answerData)
-//     expect(result.equals(answer)).toBe(true)
-// })
-
-// test('shear', () => {
-//     const m = new Matrix([
-//         [1,2,3,1],
-//         [4,5,6,1],
-//         [7,8,9,1],
-//         [10,11,12,1]
-//     ])
-
-//     const result = m.shear(13,14,15,16,17,18)
-
-//     const transform = shear(13,14,15,16,17,18)
-//     const answerData = []
-//     for (let i=0; i<m.height; i++) {
-//         let row = m.getRowAsTuple(i)
-//         answer.data.push(transform.multiply(row).data)
-//     }
-
-//     const answer = new Matrix(answerData)
-//     expect(result.equals(answer)).toBe(true)
-// })
-
-// test('chain', () => {
-//     const m = new Matrix([
-//         [1,2,3,1],
-//         [4,5,6,1],
-//         [7,8,9,1],
-//         [10,11,12,1]
-//     ])
-
-//     const result = m.rotateZ(13,14,15).scale(16).translate(17,18,19)
-
-//     const transform = translate(17,18,19).multiply(scale(16)).multiply(rotateZ(13,14,15))
-//     const answerData = []
-//     for (let i=0; i<m.height; i++) {
-//         let row = m.getRowAsTuple(i)
-//         answer.data.push(transform.multiply(row).data)
-//     }
-
-//     const answer = new Matrix(answerData)
-//     expect(result.equals(answer)).toBe(true)
-// })
+    const result = m.multiply(tup)
+    expect(result.data).toEqual([8,13,9])
+})

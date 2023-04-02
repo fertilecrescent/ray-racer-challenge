@@ -1,12 +1,12 @@
-const {Tuple} = require('./src/tuple.js')
 const {
+    Tuple,
     translation, 
-    scaling, 
     rotationX, 
     rotationY, 
     rotationZ, 
+    scaling, 
     shearing
-} = require('transformations.js')
+} = require('./src/matrix.js')
 
 test('constructor', () => {
 
@@ -76,9 +76,9 @@ test('negate', () => {
     expect(tupB.negate().equals(tupA)).toBe(true)
 })
 
-test('scale', () => {
+test('scaleEven', () => {
     const tupA = new Tuple([1,2,3,4])
-    const tupB = tupA.scale(5)
+    const tupB = tupA.scaleEven(5)
 
     expect(tupB.data).toEqual([5,10,15,20])
 })
@@ -101,12 +101,12 @@ test('normalize', () => {
     expect(tupC.magnitude()).toBe(1)
 })
 
-test('dot', () => {
+test('multiply', () => {
     const tupA = new Tuple([1,2,3,0])
     const tupB = new Tuple([3,2,1,0])
-    expect(tupA.dot(tupB)).toBe(10)
+    expect(tupA.multiply(tupB)).toBe(10)
     const tupC = new Tuple([1,1,-1,0])
-    expect(tupA.dot(tupC)).toBe(0)
+    expect(tupA.multiply(tupC)).toBe(0)
 })
 
 test('cross', () => {
@@ -134,10 +134,13 @@ test('translate', () => {
 
     const result = tup.translate(4,5,6)
 
-    const transform = translate(4,5,6)
+    const transform = translation(4,5,6)
     const answer = transform.multiply(tup)
 
     expect(result.equals(answer)).toBe(true)
+
+    // can only transform points and vectors
+    expect(() => new Tuple([1,2,3,4,5]).translate(4,5,6)).toThrow('can only transform points and vectors')
 })
 
 test('scale', () => {
@@ -145,7 +148,7 @@ test('scale', () => {
 
     const result = tup.scale(4,5,6)
 
-    const transform = scale(4,5,6)
+    const transform = scaling(4,5,6)
     const answer = transform.multiply(tup)
 
     expect(result.equals(answer)).toBe(true)
@@ -156,7 +159,7 @@ test('rotateX', () => {
 
     const result = tup.rotateX(4)
 
-    const transform = rotateX(4)
+    const transform = rotationX(4)
     const answer = transform.multiply(tup)
 
     expect(result.equals(answer)).toBe(true)
@@ -167,7 +170,7 @@ test('rotateY', () => {
 
     const result = tup.rotateY(4)
 
-    const transform = rotateY(4)
+    const transform = rotationY(4)
     const answer = transform.multiply(tup)
 
     expect(result.equals(answer)).toBe(true)
@@ -178,7 +181,7 @@ test('rotateZ', () => {
 
     const result = tup.rotateZ(4)
 
-    const transform = rotateZ(4)
+    const transform = rotationZ(4)
     const answer = transform.multiply(tup)
 
     expect(result.equals(answer)).toBe(true)
@@ -189,7 +192,7 @@ test('shear', () => {
 
     const result = tup.shear(4,5,6,7,8,9)
 
-    const transform = shear(4,5,6,7,8,9)
+    const transform = shearing(4,5,6,7,8,9)
     const answer = transform.multiply(tup)
 
     expect(result.equals(answer)).toBe(true)
@@ -198,10 +201,10 @@ test('shear', () => {
 test('chain', () => {
     const tup = new Tuple([1,2,3,1])
 
-    const result = tup.shear(4,5,6,7,8,9).rotateZ(10).scale(-11)
+    const result = tup.shear(4,5,6,7,8,9).rotateZ(10).scale(-11,12,13)
 
-    const transform = scale(-11).multiply(rotateZ(10)).multiply(shear(4,5,6,7,8,9))
-    const answer = transform.multiply(result)
+    const transform = scaling(-11,12,13).multiply(rotationZ(10)).multiply(shearing(4,5,6,7,8,9))
+    const answer = transform.multiply(tup)
 
-    expect(result.equals(answer)).toBe(true)
+    expect(result.equals(answer, 8)).toBe(true)
 })

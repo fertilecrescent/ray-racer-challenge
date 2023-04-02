@@ -1,4 +1,4 @@
-const { Tuple } = require('./tuple.js')
+const { Tuple } = require('./matrix.js')
 
 class Pixels {
 

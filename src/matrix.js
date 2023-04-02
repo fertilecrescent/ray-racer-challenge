@@ -1,5 +1,215 @@
-const { Tuple } = require('./tuple.js')
 const { floatingPointEquals } = require('./utils.js')
+
+function translation(x, y, z) {
+    return new Matrix([
+        [1,0,0,x],
+        [0,1,0,y],
+        [0,0,1,z],
+        [0,0,0,1]
+    ])
+}
+
+function scaling(x, y, z) {
+    return new Matrix([
+        [x,0,0,0],
+        [0,y,0,0],
+        [0,0,z,0],
+        [0,0,0,1]
+    ])
+}
+
+function rotationX(rad) {
+    return new Matrix([
+        [1,0,0,0],
+        [0,Math.cos(rad),Math.sin(rad)*-1,0],
+        [0,Math.sin(rad),Math.cos(rad),0],
+        [0,0,0,1]
+    ])
+}
+
+function rotationY(rad) {
+    return new Matrix([
+        [Math.cos(rad),0,Math.sin(rad),0],
+        [0,1,0,0],
+        [-1*Math.sin(rad),0,Math.cos(rad),0],
+        [0,0,0,1]
+    ])
+}
+
+function rotationZ(rad) {
+    return new Matrix([
+        [Math.cos(rad),-1*Math.sin(rad),0,0],
+        [Math.sin(rad),Math.cos(rad),0,0],
+        [0,0,1,0],
+        [0,0,0,1]
+    ])
+}
+
+function shearing(xy, xz, yx, yz, zx, zy) {
+    return new Matrix([
+        [1,xy,xz,0],
+        [yx,1,yz,0],
+        [zx,zy,1,0],
+        [0,0,0,1]
+    ])
+}
+
+class Tuple {
+
+    constructor(data) {
+        this.data = data
+        this.size = data.length
+    }
+
+    get(index) {
+        if (index >= this.size) {
+            throw Error(`${index} is out of bounds for tuple of size ${this.size}`)
+        }
+        return this.data[index]
+    }
+
+    set(index, value) {
+        if (index >= this.size) {
+            throw Error(`${index} is out of bounds for tuple of size ${this.size}`)
+        }
+        this.data[index] = value
+    }
+
+    equals(other, precision) {
+        if (!(other instanceof Tuple)) {return false}
+        else if (!(this.size === other.size)) {return false}
+        else {
+            return this.data.reduce((acc, _, index) => {
+                return acc && 
+                floatingPointEquals(this.get(index), other.get(index), precision)
+            }, true)
+        }
+    }
+
+    add(other) {
+        if (!(other instanceof Tuple)) {
+            throw Error('only tuples can be added to tuples')
+        } else if (!(this.size === other.size)) {
+            throw Error('cannot add tuples of different sizes')
+        } else {
+            return new Tuple(this.data.map((_, index) => this.get(index) + other.get(index)))
+        }
+    }
+
+    subtract(other) {
+        if (!(other instanceof Tuple)) {
+            throw Error('only tuples can be subtracted from tuples')
+        } else if (!(this.size === other.size)) {
+            throw Error('cannot subtract tuples of different sizes')
+        } else {
+            return new Tuple(this.data.map((_, index) => this.get(index) - other.get(index)))
+        }
+    }
+
+    negate() {
+        const zeros = []
+        for (let i=0; i<this.size; i++) {zeros.push(0)}
+        return (new Tuple(zeros)).subtract(this)
+    }
+
+    scaleEven(factor) {
+        return new Tuple(this.data.map((val) => val*factor))
+    }
+
+    magnitude() {
+        const squares = this.data.map((val) => val*val)
+        const sumOfSquares = squares.reduce((acc, val) => {return acc + val}, 0)
+        return Math.pow(sumOfSquares, 1/2)
+    }
+
+    normalize() {
+        return new Tuple(this.data.map((val) => val/this.magnitude()))
+    }
+
+    multiply(other) {
+        return this.data.reduce((acc, _, index) => {
+            return acc + this.get(index)*other.get(index)
+        }, 0)
+    }
+
+    cross(other) {
+        if (!(other instanceof Tuple)) {throw Error('cannot cross a vector with a non-vector')}
+        else if (!(this.size === 4 && other.size === 4)) {
+            throw Error('to cross two vectors they must each be of size 4')
+        } else {
+            return new Tuple([
+                this.get(1) * other.get(2) - this.get(2) * other.get(1),
+                this.get(2) * other.get(0) - this.get(0) * other.get(2),
+                this.get(0) * other.get(1) - this.get(1) * other.get(0),
+                0
+            ])
+        }
+    }
+
+    hadamard(other) {
+        return new Tuple(this.data.map((_, index) => 
+            this.get(index)*other.get(index)
+        ))
+    }
+
+    translate(x, y, z) {
+        this.validateCanTransform()
+        const transform = translation(x,y,z)
+        return transform.multiply(this)
+    }
+
+    scale(x, y, z) {
+        this.validateCanTransform()
+        const transform = scaling(x,y,z)
+        return transform.multiply(this)
+    }
+
+    rotateX(angle) {
+        this.validateCanTransform()
+        const transform = rotationX(angle)
+        return transform.multiply(this)
+    }
+
+    rotateY(angle) {
+        this.validateCanTransform()
+        const transform = rotationY(angle)
+        return transform.multiply(this)
+    }
+
+    rotateZ(angle) {
+        this.validateCanTransform()
+        const transform = rotationZ(angle)
+        return transform.multiply(this)
+    }
+
+    shear(xy, xz, yx, yz, zx, zy) {
+        this.validateCanTransform()
+        const transform = shearing(xy, xz, yx, yz, zx, zy)
+        return transform.multiply(this)
+    }
+
+    isVector() {
+        return (this.size == 4) && (this.data[3] == 0)
+    }
+
+    isPoint() {
+        return (this.size == 4) && (this.data[3] == 1)
+    }
+
+    validateCanTransform() {
+        if (!(this.size == 4)) {
+            throw new Error('can only transform points and vectors')
+        }
+    }
+
+    static point(x, y, z) {
+        return new Tuple([x,y,z,1])
+    }
+
+    static vector(x, y, z) {
+        return new Tuple([x,y,z,0])
+    }
+}
 
 class Matrix {
 
@@ -23,7 +233,6 @@ class Matrix {
 
     get(row, col) {
         this.validateIndices(row, col)
-        this.validate
         return this.data[row][col]
     }
 
@@ -79,7 +288,7 @@ class Matrix {
 
         const data = []
         for (let row=0; row<this.height; row++) {
-            data.push(this.getRowAsTuple(row).dot(tuple))
+            data.push(this.getRowAsTuple(row).multiply(tuple))
         }
         return new Tuple(data)
     }
@@ -101,7 +310,7 @@ class Matrix {
             for (let col=0; col<other.width; col++) {
                 a = this.getRowAsTuple(row)
                 b = other.getColAsTuple(col)
-                data[row].push(a.dot(b))
+                data[row].push(a.multiply(b))
             }
         }
 
@@ -192,7 +401,6 @@ class Matrix {
         if (!this.hasInverse()) {return null}
         else {
             const det = this.det()
-            console.log(det, 'det')
             const m = new Matrix(null, this.height, this.width)
             for (let row=0; row<this.height; row++) {
                 for (let col=0; col<this.width; col++) {
@@ -278,4 +486,13 @@ class Matrix {
     }
 }
 
-module.exports = { Matrix }
+module.exports = { 
+    Matrix,
+    Tuple,
+    translation, 
+    rotationX, 
+    rotationY, 
+    rotationZ, 
+    scaling, 
+    shearing 
+}

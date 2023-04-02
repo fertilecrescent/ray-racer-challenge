@@ -3,7 +3,7 @@
  */
 
 const { Pixels } = require('./src/pixels.js')
-const { Tuple } = require('./src/tuple.js')
+const { Tuple } = require('./src/matrix.js')
 
 document.body.innerHTML = ' \
 <div id="canvas-container"> \
